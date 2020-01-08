@@ -4,6 +4,16 @@ from .data import *
 from itertools import compress
 import copy
 
+# Database is managed by valuing new rows based on inherent row value combined with database report
+# Report is a generic object that will need to be updated as we expand our idea of what a database is XYZTAG
+def database_val_func(vals = pd.DataFrame(index=[0], columns = [0]),weights = np.array([1,1,1]), report=[]):
+    if isinstance(vals,pd.DataFrame): #DataFrame
+        val_tot = vals.fillna(0).values[:,1:] * weights[1:]					# make use of broadcasting, avoid using age column.
+        decay = np.power(decay, vals.fillna(0).values[:,0]).reshape([-1,1]) # decays vals according to age and decay factor of
+                                                                            # DataStore, and reshape array to prep for next step.
+        val_tot = np.sum(val_tot * decay, axis = 1)
+    
+    return val_tot
 
 def linear_val_func(vals = pd.DataFrame(index=[0],columns = [0]),weights = np.array([1,1,1]),decay = 0.9): #vals can be dataframe or series
     if isinstance(vals,pd.DataFrame): #DataFrame
